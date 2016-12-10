@@ -9,6 +9,9 @@ const PARSERS = {
 }
 
 const defaultOptions = {
+  data: {},
+  extractTitle: true,
+  removeDataTags: false,
   silent: false
 }
 
@@ -40,11 +43,11 @@ class MarkdownData {
    * @param {String} s
    * @return {Object}
    */
-  static _parseData (t, s, o) {
+  static _parseData (t, s, silent) {
     try {
       return PARSERS[t](s)
     } catch (e) {
-      if (o.silent === false) {
+      if (silent === false) {
         throw new Error(e.message)
       }
     }
@@ -64,6 +67,40 @@ class MarkdownData {
       return null
     }
 
+    const data = options.data
+
+    // Extract title
+    if (options.extractTitle) {
+      const result = s.match(/^#([^#].*)\n|^(.*)\n={3,}[ \t]*\n/m)
+      if (result && !data.title) {
+        data.title = (result[1] || result[2]).trim()
+      }
+    }
+
+    // Parse tagged data
+    s = s.replace(/(<!--)([a-z0-9.]+)([ \t]*-->)([^<]+)(<!--[ \t]*-->)/g,
+        function (match, $1, $2, $3, $4, $5, offset, original) {
+          if (!data[$2]) {
+            data[$2] = $4.trim()
+          }
+          if (options.removeDataTags) {
+            return $4
+          }
+          return $1 + $2 + $3 + $4 + $5
+        })
+
+    s = s.replace(/^(<!--)([a-zA-Z0-9-_.]+)([ \t]*-->\n)((.*\S.*(\n|$))+?)(\n|$)/gm,
+          function (match, $1, $2, $3, $4, $5, offset, original) {
+            if (!data[$2]) {
+              data[$2] = $4.trim()
+            }
+            if (options.removeDataTags) {
+              return $4
+            }
+            return $1 + $2 + $3 + $4 + $5
+          })
+
+
     // Extract data blocks
     let datablocks = []
     try {
@@ -76,18 +113,27 @@ class MarkdownData {
       console.log(e.message)
     }
 
-    // Parse blocks
-    let data = {}
+    // Parse data blocks
     for (let db of datablocks) {
       if (PARSERS[db.type]) {
         try {
-          let obj = {}
+          let obj = this._parseData(db.type, db.data, options.silent)
           if (db.key) {
-            obj[db.key] = this._parseData(db.type, db.data, options)
+            if (!data[db.key]) {
+              data[db.key] = {}
+            }
+            for (let k of Object.keys(obj)) {
+              if (!data[db.key][k]) {
+                data[db.key][k] = obj[k]
+              }
+            }
           } else {
-            obj = this._parseData(db.type, db.data, options)
+            for (let k of Object.keys(obj)) {
+              if (!data[k]) {
+                data[k] = obj[k]
+              }
+            }
           }
-          data = Object.assign({}, data, obj)
         } catch (e) {
           console.log(e.message)
         }
@@ -98,7 +144,7 @@ class MarkdownData {
       }
     }
 
-    return {markdown: s, data: data}
+    return {markdown: s.trim(), data: data}
   }
 
 }
