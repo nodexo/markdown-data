@@ -14,7 +14,9 @@ Installation
 Info/Reasoning
 --------------
 - for document (meta)data
-- heavily inspired by GFMs *fenced code blocks*
+- heavily inspired by 
+    1. GFMs *fenced code blocks*
+    2. HTML microdata
 - html has been first class citizen in markdown since the beginning
 - compatible to all markdown parsers/editors without having any side effects
 - but: never use it for private or secret data!
