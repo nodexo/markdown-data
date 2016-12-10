@@ -9,7 +9,7 @@ const PARSERS = {
 }
 
 const defaultOptions = {
-  data: {},
+  metadata: {},
   extractTitle: true,
   removeDataTags: false,
   silent: false
@@ -67,21 +67,22 @@ class MarkdownData {
       return null
     }
 
-    const data = options.data
+    const data = {}
+    const metadata = options.metadata
 
     // Extract title
     if (options.extractTitle) {
       const result = s.match(/^#([^#].*)\n|^(.*)\n={3,}[ \t]*\n/m)
-      if (result && !data.title) {
-        data.title = (result[1] || result[2]).trim()
+      if (result && !metadata.title) {
+        metadata.title = (result[1] || result[2]).trim()
       }
     }
 
     // Parse tagged data
     s = s.replace(/(<!--)([a-z0-9.]+)([ \t]*-->)([^<]+)(<!--[ \t]*-->)/g,
         function (match, $1, $2, $3, $4, $5, offset, original) {
-          if (!data[$2]) {
-            data[$2] = $4.trim()
+          if (!metadata[$2]) {
+            metadata[$2] = $4.trim()
           }
           if (options.removeDataTags) {
             return $4
@@ -91,8 +92,8 @@ class MarkdownData {
 
     s = s.replace(/^(<!--)([a-zA-Z0-9-_.]+)([ \t]*-->\n)((.*\S.*(\n|$))+?)(\n|$)/gm,
           function (match, $1, $2, $3, $4, $5, offset, original) {
-            if (!data[$2]) {
-              data[$2] = $4.trim()
+            if (!metadata[$2]) {
+              metadata[$2] = $4.trim()
             }
             if (options.removeDataTags) {
               return $4
@@ -118,7 +119,7 @@ class MarkdownData {
       if (PARSERS[db.type]) {
         try {
           let obj = this._parseData(db.type, db.data, options.silent)
-          if (db.key) {
+          if (db.key && db.key !== 'metadata') {
             if (!data[db.key]) {
               data[db.key] = {}
             }
@@ -129,8 +130,14 @@ class MarkdownData {
             }
           } else {
             for (let k of Object.keys(obj)) {
-              if (!data[k]) {
-                data[k] = obj[k]
+              if (db.key === 'metadata') {
+                if (!metadata[k]) {
+                  metadata[k] = obj[k]
+                }
+              } else {
+                if (!data[k]) {
+                  data[k] = obj[k]
+                }
               }
             }
           }
@@ -144,7 +151,7 @@ class MarkdownData {
       }
     }
 
-    return {markdown: s.trim(), data: data}
+    return {markdown: s.trim(), metadata: metadata, data: data}
   }
 
 }
