@@ -1,7 +1,7 @@
 {
   "name": "markdown-data",
   "version": "0.4.0",
-  "description": "Fenced data blocks for markdown.",
+  "description": "Tagged metadata and fenced data blocks for markdown.",
   "main": "index.js",
   "scripts": {
     "test": "standard"

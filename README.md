@@ -2,7 +2,7 @@
 markdown-data
 =============
 
-Markdown preprocessor: fenced data blocks for markdown.
+Markdown preprocessor: tagged metadata and fenced data blocks for markdown.
 
 
 Installation

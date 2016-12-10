@@ -90,7 +90,7 @@ class MarkdownData {
           return match
         })
 
-    // Parse tagged multiline data
+    // Parse tagged multi-line data
     s = s.replace(/^<!--([a-zA-Z0-9-_.]+)[ \t]*-->\n((.*\S.*(\n|$))+?)(\n|$)/gm,
           function (match, $1, $2, $3, offset, original) {
             if (!metadata[$1]) {
