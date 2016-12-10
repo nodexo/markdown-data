@@ -11,7 +11,7 @@ const PARSERS = {
 const defaultOptions = {
   metadata: {},
   extractTitle: true,
-  removeDataTags: false,
+  removeDataTags: true,
   silent: false
 }
 
@@ -79,26 +79,31 @@ class MarkdownData {
     }
 
     // Parse tagged data
-    s = s.replace(/(<!--)([a-z0-9.]+)([ \t]*-->)([^<]+)(<!--[ \t]*-->)/g,
-        function (match, $1, $2, $3, $4, $5, offset, original) {
-          if (!metadata[$2]) {
-            metadata[$2] = $4.trim()
+    s = s.replace(/<!--([a-z0-9.]+)[ \t]*-->([^<]+)<!--[ \t]*-->/g,
+        function (match, $1, $2, offset, original) {
+          if (!metadata[$1]) {
+            metadata[$1] = $2.trim()
           }
           if (options.removeDataTags) {
-            return $4
+            return $2
           }
-          return $1 + $2 + $3 + $4 + $5
+          return match
         })
 
-    s = s.replace(/^(<!--)([a-zA-Z0-9-_.]+)([ \t]*-->\n)((.*\S.*(\n|$))+?)(\n|$)/gm,
-          function (match, $1, $2, $3, $4, $5, offset, original) {
-            if (!metadata[$2]) {
-              metadata[$2] = $4.trim()
+    // Parse tagged multiline data
+    s = s.replace(/^<!--([a-zA-Z0-9-_.]+)[ \t]*-->\n((.*\S.*(\n|$))+?)(\n|$)/gm,
+          function (match, $1, $2, $3, offset, original) {
+            if (!metadata[$1]) {
+              metadata[$1] = $2
+                              .replace(/ {2}\n/g, '{n}')
+                              .replace(/\n/g, ' ')
+                              .replace(/{n}/g, '\n')
+                              .trim()
             }
             if (options.removeDataTags) {
-              return $4
+              return $2
             }
-            return $1 + $2 + $3 + $4 + $5
+            return match
           })
 
 
@@ -108,7 +113,10 @@ class MarkdownData {
       s = s.replace(/^<!--([a-z0-9]+):?([a-z0-9-_.]+)?\n((.*\n)*?)-->(\n|$)/gm,
         function (match, $1, $2, $3, offset, original) {
           datablocks.push({type: $1, key: $2 || null, data: $3.trim()})
-          return ''
+          if (options.removeDataTags) {
+            return ''
+          }
+          return match
         })
     } catch (e) {
       console.log(e.message)
