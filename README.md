@@ -14,7 +14,7 @@ Installation
 Usage
 -----
 
-```
+```javascript
 const markdownData = require('markdown-data')
 
 let markdown = `
