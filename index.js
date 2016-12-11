@@ -110,7 +110,7 @@ class MarkdownData {
     // Extract data blocks
     let datablocks = []
     try {
-      s = s.replace(/^<!--([a-z0-9]+):?([a-z0-9-_.]+)?\n((.*\n)*?)-->(\n|$)/gm,
+      s = s.replace(/^<!--([a-z0-9]+):?([a-z0-9-_.]+)?[ \t]*\n((.*\n)*?)-->(\n|$)/gm,
         function (match, $1, $2, $3, offset, original) {
           datablocks.push({type: $1, key: $2 || null, data: $3.trim()})
           if (options.removeDataTags) {
