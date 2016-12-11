@@ -9,9 +9,9 @@ const PARSERS = {
 }
 
 const defaultOptions = {
+  Silent: false,
   ExtractTitle: true,
-  RemoveDataTags: true,
-  Silent: false
+  RemoveDataTags: true
 }
 
 /**
@@ -89,7 +89,7 @@ class MarkdownData {
           return match
         })
 
-    // Parse tagged multi-line data
+    // Parse tagged multiline data
     s = s.replace(/^<!--([a-zA-Z0-9-_.]+)[ \t]*-->\n((.*\S.*(\n|$))+?)(\n|$)/gm,
           function (match, $1, $2, $3, offset, original) {
             if (!metadata[$1]) {
@@ -108,7 +108,7 @@ class MarkdownData {
     // Extract data blocks
     let datablocks = []
     try {
-      s = s.replace(/^<!--([a-z0-9]+):?([a-z0-9-_.]+)?[ \t]*\n((.*\n)*?)-->(\n|$)/gm,
+      s = s.replace(/^<!--([a-z0-9]+):?([a-zA-Z0-9-_.]+)?[ \t]*\n((.*\n)*?)-->(\n|$)/gm,
         function (match, $1, $2, $3, offset, original) {
           datablocks.push({type: $1, key: $2 || null, data: $3.trim()})
           if (options.RemoveDataTags) {
