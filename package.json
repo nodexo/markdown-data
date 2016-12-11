@@ -1,7 +1,7 @@
 {
   "name": "markdown-data",
   "version": "0.4.0",
-  "description": "Tagged metadata and fenced data blocks for markdown.",
+  "description": "Preprocessor for 'tagged metadata' and 'fenced data blocks' for markdown.",
   "main": "index.js",
   "scripts": {
     "test": "standard"
@@ -11,9 +11,11 @@
     "url": "git+https://github.com/nodexo/markdown-data"
   },
   "keywords": [
-    "markdown",
+    "data blocks",
+    "tagged metadata",
     "data",
-    "fenced data blocks"
+    "metadata",
+    "markdown"
   ],
   "author": "Michael Kortstiege",
   "license": "ISC",
