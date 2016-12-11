@@ -9,10 +9,9 @@ const PARSERS = {
 }
 
 const defaultOptions = {
-  metadata: {},
-  extractTitle: true,
-  removeDataTags: true,
-  silent: false
+  ExtractTitle: true,
+  RemoveDataTags: true,
+  Silent: false
 }
 
 /**
@@ -43,11 +42,11 @@ class MarkdownData {
    * @param {String} s
    * @return {Object}
    */
-  static _parseData (t, s, silent) {
+  static _parseData (t, s, Silent) {
     try {
       return PARSERS[t](s)
     } catch (e) {
-      if (silent === false) {
+      if (Silent === false) {
         throw new Error(e.message)
       }
     }
@@ -61,18 +60,18 @@ class MarkdownData {
   static parse (s, userOptions) {
     const options = this._mergeOptions(userOptions)
     if (!s || typeof s !== 'string') {
-      if (options.silent === false) {
+      if (options.Silent === false) {
         throw new Error('The first parameter has to be of type string!')
       }
       return null
     }
 
     const data = {}
-    const metadata = options.metadata
+    const metadata = {}
 
     // Extract title
-    if (options.extractTitle) {
-      const result = s.match(/^#([^#].*)\n|^(.*)\n={3,}[ \t]*\n/m)
+    if (options.ExtractTitle) {
+      const result = s.match(/^#([^#\n]+)#?.*\n|^(.*)\n=+[ \t]*\n/m)
       if (result && !metadata.title) {
         metadata.title = (result[1] || result[2]).trim()
       }
@@ -84,7 +83,7 @@ class MarkdownData {
           if (!metadata[$1]) {
             metadata[$1] = $2.trim()
           }
-          if (options.removeDataTags) {
+          if (options.RemoveDataTags) {
             return $2
           }
           return match
@@ -100,12 +99,11 @@ class MarkdownData {
                               .replace(/{n}/g, '\n')
                               .trim()
             }
-            if (options.removeDataTags) {
+            if (options.RemoveDataTags) {
               return $2
             }
             return match
           })
-
 
     // Extract data blocks
     let datablocks = []
@@ -113,7 +111,7 @@ class MarkdownData {
       s = s.replace(/^<!--([a-z0-9]+):?([a-z0-9-_.]+)?[ \t]*\n((.*\n)*?)-->(\n|$)/gm,
         function (match, $1, $2, $3, offset, original) {
           datablocks.push({type: $1, key: $2 || null, data: $3.trim()})
-          if (options.removeDataTags) {
+          if (options.RemoveDataTags) {
             return ''
           }
           return match
@@ -126,7 +124,7 @@ class MarkdownData {
     for (let db of datablocks) {
       if (PARSERS[db.type]) {
         try {
-          let obj = this._parseData(db.type, db.data, options.silent)
+          let obj = this._parseData(db.type, db.data, options.Silent)
           if (db.key && db.key !== 'metadata') {
             if (!data[db.key]) {
               data[db.key] = {}
@@ -153,7 +151,7 @@ class MarkdownData {
           console.log(e.message)
         }
       } else {
-        if (options.silent === false) {
+        if (options.Silent === false) {
           throw new Error(`Unsupported parser: ${db.type}`)
         }
       }
