@@ -1,7 +1,7 @@
 {
   "name": "markdown-data",
   "version": "0.4.0",
-  "description": "Preprocessor for 'tagged metadata' and 'fenced data blocks' for markdown.",
+  "description": "Markdown preprocessor for 'tagged metadata' and 'fenced data blocks'.",
   "main": "index.js",
   "scripts": {
     "test": "standard"
