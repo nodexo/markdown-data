@@ -4,7 +4,7 @@
   "description": "Markdown preprocessor for 'tagged metadata' and 'fenced data blocks'.",
   "main": "index.js",
   "scripts": {
-    "test": "standard"
+    "test": "standard & tap test/*.js --coverage --reporter spec --coverage-report=lcov"
   },
   "repository": {
     "type": "git",
@@ -24,7 +24,8 @@
   },
   "homepage": "https://github.com/nodexo/markdown-data#readme",
   "devDependencies": {
-    "standard": "^8.5.0"
+    "standard": "^8.5.0",
+    "tap": "^8.0.1"
   },
   "dependencies": {
     "js-yaml": "^3.7.0",
