@@ -4,6 +4,15 @@ markdown-data
 
 Markdown preprocessor for *tagged metadata* and *fenced data blocks*.
 
+[![Build Status](https://travis-ci.org/nodexo/markdown-data.svg?branch=master)](https://travis-ci.org/nodexo/markdown-data)
+[![Test Coverage](https://codeclimate.com/github/nodexo/markdown-data/badges/coverage.svg?v=1.0.0)](https://codeclimate.com/github/nodexo/markdown-data)
+[![Code Climate](https://codeclimate.com/github/nodexo/markdown-data/badges/gpa.svg?v=1.0.0)](https://codeclimate.com/github/nodexo/markdown-data)
+
+[![Dependency Status](https://david-dm.org/nodexo/markdown-data.svg?v=1.0.0)](https://david-dm.org/nodexo/markdown-data)
+[![devDependencies Status](https://david-dm.org/nodexo/markdown-data/dev-status.svg?v=1.0.0)](https://david-dm.org/nodexo/markdown-data?type=dev)
+
+[![Standard - JavaScript Style Guide](https://cdn.rawgit.com/feross/standard/master/badge.svg)](https://github.com/feross/standard)
+
 
 Installation
 ------------
