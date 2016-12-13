@@ -10,8 +10,10 @@ let result
  * Correct Headers
  */
 expectedResult = {
-  metadata: {
-    title: 'H1 Header'
+  data: {
+    meta: {
+      title: 'H1 Header'
+    }
   }
 }
 
@@ -25,7 +27,6 @@ Another H1 Header
 `)
 
   delete result.markdown
-  delete result.data
   return result
 }
 tap.strictSame(result(), expectedResult, 'Extract H1 Header - setext style (1)')
@@ -42,7 +43,6 @@ Bla bla bla...
 `)
 
   delete result.markdown
-  delete result.data
   return result
 }
 tap.strictSame(result(), expectedResult, 'Extract H1 Header - setext style (2)')
@@ -55,7 +55,6 @@ result = () => {
 `)
 
   delete result.markdown
-  delete result.data
   return result
 }
 tap.strictSame(result(), expectedResult, 'Extract H1 Header - atx style (1)')
@@ -68,7 +67,6 @@ result = () => {
 `)
 
   delete result.markdown
-  delete result.data
   return result
 }
 tap.strictSame(result(), expectedResult, 'Extract H1 Header - atx style (2)')
@@ -83,7 +81,6 @@ Bla bla bla...
 `)
 
   delete result.markdown
-  delete result.data
   return result
 }
 tap.strictSame(result(), expectedResult, 'Extract H1 Header - atx style (3)')

@@ -29,25 +29,25 @@ Paragraph
 `
 
 expectedResult = {
-  metadata: {
-    title: 'H1 Header'
+  data: {
+    meta: {
+      title: 'H1 Header'
+    }
   }
 }
 result = () => {
   let result = markdownData.parse(markdown, {ExtractTitle: true})
   delete result.markdown
-  delete result.data
   return result
 }
 tap.strictSame(result(), expectedResult, 'Parse - ExtractTitle: true')
 
 expectedResult = {
-  metadata: {}
+  data: {meta: {}}
 }
 result = () => {
   let result = markdownData.parse(markdown, {ExtractTitle: false})
   delete result.markdown
-  delete result.data
   return result
 }
 tap.strictSame(result(), expectedResult, 'Parse - ExtractTitle: false')
@@ -56,9 +56,9 @@ tap.strictSame(result(), expectedResult, 'Parse - ExtractTitle: false')
  * RemoveDataTags
 */
 markdown = `
-<!--inline -->Inline<!-- -->
+<!-- meta:inline -->Inline<!-- -->
 
-<!--block -->
+<!-- meta:block -->
 This is a block consisting
 of two lines
 
@@ -72,18 +72,16 @@ expectedResult = {
 }
 result = () => {
   let result = markdownData.parse(markdown, {RemoveDataTags: true})
-  delete result.metadata
   delete result.data
   return result
 }
 tap.strictSame(result(), expectedResult, 'Parse - RemoveDataTags: true')
 
 expectedResult = {
-  markdown: '<!--inline -->Inline<!-- -->\n\n<!--block -->\nThis is a block consisting\nof two lines\n\n<!--moml\nremark: This is a complete data block!\n-->'
+  markdown: '<!-- meta:inline -->Inline<!-- -->\n\n<!-- meta:block -->\nThis is a block consisting\nof two lines\n\n<!--moml\nremark: This is a complete data block!\n-->'
 }
 result = () => {
   let result = markdownData.parse(markdown, {RemoveDataTags: false})
-  delete result.metadata
   delete result.data
   return result
 }

@@ -66,22 +66,21 @@ class MarkdownData {
       return null
     }
 
-    const data = {}
-    const metadata = {}
+    const data = {meta: {}}
 
     // Extract title
     if (options.ExtractTitle) {
       const result = s.match(/^#([^#\n]+)#?.*\n|^(.*)\n=+[ \t]*\n/m)
-      if (result && !metadata.title) {
-        metadata.title = (result[1] || result[2]).trim()
+      if (result && !data.meta.title) {
+        data.meta.title = (result[1] || result[2]).trim()
       }
     }
 
     // Parse tagged data
-    s = s.replace(/<!--([a-z0-9.]+)[ \t]*-->([^<]+)<!--[ \t]*-->/g,
+    s = s.replace(/<!--[ \t]*meta:[ \t]*([a-z0-9.]+)[ \t]*-->([^<]+)<!--[ \t]*-->/g,
         function (match, $1, $2, offset, original) {
-          if (!metadata[$1]) {
-            metadata[$1] = $2.trim()
+          if (!data.meta[$1]) {
+            data.meta[$1] = $2.trim()
           }
           if (options.RemoveDataTags) {
             return $2
@@ -90,10 +89,10 @@ class MarkdownData {
         })
 
     // Parse tagged multiline data
-    s = s.replace(/^<!--([a-zA-Z0-9-_.]+)[ \t]*-->\n((.*\S.*(\n|$))+?)(\n|$)/gm,
+    s = s.replace(/^<!--[ \t]*meta:[ \t]*([a-zA-Z0-9-_.]+)[ \t]*-->\n((.*\S.*(\n|$))+?)(\n|$)/gm,
           function (match, $1, $2, $3, offset, original) {
-            if (!metadata[$1]) {
-              metadata[$1] = $2
+            if (!data.meta[$1]) {
+              data.meta[$1] = $2
                               .replace(/ {2}\n/g, '{n}')
                               .replace(/\n/g, ' ')
                               .replace(/{n}/g, '\n')
@@ -108,7 +107,7 @@ class MarkdownData {
     // Extract data blocks
     let datablocks = []
     try {
-      s = s.replace(/^<!--([a-z0-9]+):?([a-zA-Z0-9-_.]+)?[ \t]*\n((.*\n)*?)-->(\n|$)/gm,
+      s = s.replace(/^<!--[ \t]*(moml|yaml|toml|json):?([a-zA-Z0-9-_.]+)?[ \t]*\n((.*\n)*?)-->(\n|$)/gm,
         function (match, $1, $2, $3, offset, original) {
           datablocks.push({type: $1, key: $2 || null, data: $3.trim()})
           if (options.RemoveDataTags) {
@@ -125,7 +124,7 @@ class MarkdownData {
       if (PARSERS[db.type]) {
         try {
           let obj = this._parseData(db.type, db.data, options.Silent)
-          if (db.key && db.key !== 'metadata') {
+          if (db.key && db.key !== 'meta') {
             if (!data[db.key]) {
               data[db.key] = {}
             }
@@ -136,9 +135,9 @@ class MarkdownData {
             }
           } else {
             for (let k of Object.keys(obj)) {
-              if (db.key === 'metadata') {
-                if (!metadata[k]) {
-                  metadata[k] = obj[k]
+              if (db.key === 'meta') {
+                if (!data.meta[k]) {
+                  data.meta[k] = obj[k]
                 }
               } else {
                 if (!data[k]) {
@@ -157,7 +156,7 @@ class MarkdownData {
       }
     }
 
-    return {markdown: s.trim(), metadata: metadata, data: data}
+    return {markdown: s.trim(), data: data}
   }
 
 }
